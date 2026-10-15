@@ -1,0 +1,31 @@
+MODEL_CATALOG = [
+    {"model": "google/flan-t5-small", "task": "Summarization / QA (seq2seq)", "paramsB": 0.08,
+     "minVramInferenceGb": 0.2, "minVramFullFtGb": 1.5, "minVramLoraFtGb": 0.2,
+     "notes": "Runs on CPU. Good for a quick smoke test of a pipeline before scaling up."},
+    {"model": "google/flan-t5-base", "task": "Summarization / QA (seq2seq)", "paramsB": 0.25,
+     "minVramInferenceGb": 0.6, "minVramFullFtGb": 4.8, "minVramLoraFtGb": 0.6,
+     "notes": "Used in the Day 1/Day 2 workshops. Comfortable on any free-tier GPU."},
+    {"model": "google/flan-t5-xl", "task": "Summarization / QA (seq2seq)", "paramsB": 3,
+     "minVramInferenceGb": 7.2, "minVramFullFtGb": 57.6, "minVramLoraFtGb": 7.2,
+     "notes": "Full fine-tune needs an A100; LoRA fits a single consumer 24GB card."},
+    {"model": "Qwen/Qwen3-VL-2B-Instruct", "task": "Image-text-to-text (multimodal)", "paramsB": 2,
+     "minVramInferenceGb": 4.8, "minVramFullFtGb": 38.4, "minVramLoraFtGb": 4.8,
+     "notes": "Used in Day 1 VQA workshop. Add ~1-2GB headroom per image for vision activations."},
+    {"model": "meta-llama/Llama-3.1-8B-Instruct", "task": "General chat / instruction-following", "paramsB": 8,
+     "minVramInferenceGb": 19.2, "minVramFullFtGb": 153.6, "minVramLoraFtGb": 19.2,
+     "notes": "Gated on Hugging Face — request access first. Full fine-tune needs multi-GPU."},
+    {"model": "openai/gpt-oss-20b", "task": "General chat / tool use (powers this site's search bar)", "paramsB": 20,
+     "minVramInferenceGb": 48, "minVramFullFtGb": 384, "minVramLoraFtGb": 48,
+     "notes": "Served via Groq's hosted API in this project — nobody on the team runs this locally."},
+    {"model": "meta-llama/Llama-3.1-70B-Instruct", "task": "General chat / instruction-following", "paramsB": 70,
+     "minVramInferenceGb": 168, "minVramFullFtGb": 1344, "minVramLoraFtGb": 168,
+     "notes": "Needs multi-GPU even just for inference at bf16; quantize to INT4 to fit one 80GB card."},
+]
+
+SELECTION_CRITERIA = [
+    {"question": "What's the task?", "guidance": "Seq2seq (FLAN-T5) suits summarization/translation/QA. Decoder-only causal LMs (Llama, Qwen, GPT-OSS) suit open-ended chat. Vision-language models (Qwen3-VL) are needed once an image enters the prompt."},
+    {"question": "What hardware do you actually have?", "guidance": "Check VRAM first — a model that doesn't fit at your target precision is disqualified regardless of benchmark scores. Quantization and LoRA both trade quality/flexibility for footprint."},
+    {"question": "Licence & gating", "guidance": "Apache-2.0/MIT models (FLAN-T5, Qwen) can be used immediately. Llama-family models require accepting Meta's licence and requesting access."},
+    {"question": "Base vs instruction-tuned vs chat variant", "guidance": "A bare base model continues text; '-Instruct'/'-Chat' variants follow commands and use a specific chat template. Picking the wrong variant degrades output."},
+    {"question": "Full fine-tune vs LoRA vs frozen+prompting", "guidance": "If the base model already does the task with the right prompt, don't fine-tune. If you need the task baked in but can't afford full fine-tune compute, use LoRA."},
+]

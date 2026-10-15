@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+data/*.db
+data/google_client_secret.json
+.streamlit/secrets.toml
+.venv/
