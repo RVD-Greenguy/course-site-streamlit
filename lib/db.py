@@ -82,11 +82,14 @@ def create_pending_user(username: str, password_hash: str):
     if get_user_by_username(username):
         raise ValueError("That username is already taken.")
     now = datetime.now(timezone.utc).isoformat()
-    with get_conn() as conn:
-        conn.execute(
-            "INSERT INTO users (username, password_hash, created_at) VALUES (?, ?, ?)",
-            (username, password_hash, now),
-        )
+    try:
+        with get_conn() as conn:
+            conn.execute(
+                "INSERT INTO users (username, password_hash, created_at) VALUES (?, ?, ?)",
+                (username, password_hash, now),
+            )
+    except sqlite3.IntegrityError:
+        raise ValueError("That username is already taken.")
     return get_user_by_username(username)
 
 

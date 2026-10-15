@@ -1,11 +1,12 @@
 """Direct port of server/src/search.js — free keyless DuckDuckGo HTML scrape,
 plus an optional Google Custom Search JSON API path.
 """
-import os
 from urllib.parse import urlencode, urlparse, parse_qs, unquote
 
 import requests
 from bs4 import BeautifulSoup
+
+from .config import get_secret
 
 
 def ddgs_search(query: str, limit: int = 5):
@@ -46,8 +47,8 @@ def _resolve_redirect(href: str) -> str:
 
 
 def google_search(query: str, limit: int = 5):
-    api_key = os.environ.get("GOOGLE_API_KEY")
-    cse_id = os.environ.get("GOOGLE_CSE_ID")
+    api_key = get_secret("GOOGLE_API_KEY")
+    cse_id = get_secret("GOOGLE_CSE_ID")
     if not api_key or not cse_id:
         raise RuntimeError("Google search mode needs GOOGLE_API_KEY and GOOGLE_CSE_ID set on the server.")
 

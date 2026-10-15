@@ -1,13 +1,14 @@
 """Direct port of server/src/groq.js — thin wrapper around Groq's OpenAI-
 compatible chat completions endpoint."""
-import os
 import requests
+
+from .config import get_secret
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 
 def groq_chat_completion(model: str, messages: list, tools=None, tool_choice=None):
-    api_key = os.environ.get("GROQ_API_KEY")
+    api_key = get_secret("GROQ_API_KEY")
     if not api_key:
         raise RuntimeError("GROQ_API_KEY is not set on the server.")
 

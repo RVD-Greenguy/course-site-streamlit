@@ -42,9 +42,13 @@ def register_user(username: str, password: str):
     return db.create_pending_user(username, hash_password(password))
 
 
+_DUMMY_HASH = hash_password(os.urandom(16).hex())
+
+
 def login(username: str, password: str) -> bool:
     user = db.get_user_by_username(username.strip().lower())
-    if not user or not verify_password(password, user["password_hash"]):
+    stored_hash = user["password_hash"] if user else _DUMMY_HASH
+    if not verify_password(password, stored_hash) or not user:
         return False
     st.session_state[SESSION_KEY] = user
     return True

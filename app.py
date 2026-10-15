@@ -54,6 +54,8 @@ def render_sidebar(user):
 
 def main():
     user = auth.current_user()
+    if user:
+        user = auth.refresh_current_user()
 
     if not user:
         login.render()
