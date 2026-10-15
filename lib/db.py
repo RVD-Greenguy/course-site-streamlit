@@ -45,9 +45,10 @@ def _seed_admin():
     system without a manual DB edit. Remaining users/admins are created via
     the login page's 'Create account' tab + admin approval."""
     from .auth import hash_password  # local import avoids a circular import at module load
+    from .config import get_secret
 
-    username = os.environ.get("ADMIN_USERNAME", "").strip().lower()
-    password = os.environ.get("ADMIN_PASSWORD", "")
+    username = get_secret("ADMIN_USERNAME").strip().lower()
+    password = get_secret("ADMIN_PASSWORD")
     if not username or not password:
         return
 
